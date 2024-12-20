@@ -12,11 +12,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2  # Checkout the code
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+        uses: actions/checkout@v3  # Checkout the code
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Install dependencies from requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  
+      - name: Lint with flake8
+        run: |
+          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+      - name: Run unit tests with nose
+        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
